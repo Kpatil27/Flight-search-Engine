@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <header>
+  <h1>Flight Search Engine</h1>
+</header>
+
+  <style>
+    body {
+        background-color:lightslategray;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    ul {
+        
+      list-style:disc ;
+    }
+    li {
+        
+        border-style:double;
+      padding: 10px 0;
+      line-height: 1.2rem;
+    }
+    h1 {
+        text-align: center;
+        border-style: dotted;
+    }
+
+
+  </style>
+</head>
+<body>
+  <form id="search-flight">
+    <center><label for="search">Search:</label>
+    <input type="text" name="search" id="search">
+    <button name="search_btn">Search</button>
+    <button name="reset" type="reset">Reset</button></center>
+  </form>
+  <div id="app"></div>
+<script>
+  var flight = [
+    {
+      "Ocity": "Pune",
+      "Dcity":"Mumbai",
+      "Date":"10.03.2022",
+      "Passenger":"5"
+    },
+    {
+      "Ocity": "Pune",
+      "Dcity":"Delhi",
+      "Date":"15.03.2022",
+      "Passenger":"10"
+    },
+    {
+      "Ocity": "Delhi",
+      "Dcity":"Mumbai",
+      "Date":"20.03.2022",
+      "Passenger":"6"
+    },
+    {
+      "Ocity": "Hydrabad",
+      "Dcity":"Mumbai",
+      "Date":"01.04.2022",
+      "Passenger":"10"
+    },
+    {
+      "Ocity": "Delhi",
+      "Dcity":"Hydrabad",
+      "Date":"25.03.2022",
+      "Passenger":"2"
+    },
+    {
+      "Ocity": "Delhi",
+      "Dcity":"Pune",
+      "Date":"10.04.2022",
+      "Passenger":"01"
+    },    
+    {
+        "Ocity": "UK",
+      "Dcity":"Mumbai",
+      "Date":"25.03.2022",
+      "Passenger":"5"
+    },
+  ]
+  
+  var render = function(data) {                         // function takes array of JSON object as a parameter 
+  var app = document.getElementById('app');
+  var flightHTMLString = '<ul>'+
+      data.map(function(flight){                                              //creating new array from calling a function for every array element
+        return '<li>'+
+                '<strong>Origin City: </strong>' + flight.Ocity + '<br/>' +
+                '<strong>Destination City: </strong>' + flight.Dcity + '<br/>' +
+                '<strong>Travel Date: </strong>' + flight.Date + '<br/>' +
+                '<strong>Available Seat: </strong>' + flight.Passenger + '<br/>' +
+              '</li>';
+      }).join('');
+      + '</ul>';
+
+    app.innerHTML = flightHTMLString;   
+  }
+  render(flight);   //function call
+
+  var handleSearch = function(event) {
+    event.preventDefault();                                        //stops reloading
+    // Get the search terms from the input field
+    var searchTerm = event.target.elements['search'].value;            //return the element 
+    // Tokenize the search terms and remove empty spaces
+    var tokens = searchTerm                                        // holds the searched string by user 
+                  .toLowerCase()                                       // convert to lower case
+                  .split(' ')                                           //split string into array of substring
+                  .filter(function(token){                                 // filter creates new  array filled with element 
+                    return token.trim() !== '';                   // remove any white spaces
+                  });
+   if(tokens.length) {
+    //  Create a regular expression of all the search terms
+    var searchTermRegex = new RegExp(tokens.join('|'), 'gim');                   // RegExp find all occurance 
+    var filteredList = flight.filter(function(flight){                           // if we found the searched item that we store in filterdList
+      // Create a string of all object values
+      var flightString = '';
+      for(var key in flight) {
+        if(flight.hasOwnProperty(key) && flight[key] !== '') {                             // return the boolean value
+          flightString += flight[key].toString().toLowerCase().trim() + ' ';
+        }
+
+
+        //else { alert ("Not Found");}
+      }
+      // Return flight objects where a match with the search regex if found
+      return flightString.match(searchTermRegex);                          //returning object that matching
+       
+    });
+    // Render the search results
+    //alert("Found");
+    render(filteredList);                        // render the result by passing filterdList to function 
+
+    
+   }
+   
+  };
+  
+  document.addEventListener('submit', handleSearch); // block to listen to submit event 
+  document.addEventListener('reset', function(event){
+    event.preventDefault();
+    render(flight);
+  })
+</script>
+</body>
+</html>
+
